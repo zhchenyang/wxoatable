@@ -10,4 +10,6 @@ APPSecret(appsecret)
 
 get_token()
 
-update_data(append = "data/getusercumulate.csv")
+update_data(append = "data/getusershare.csv")
+update_data(append = "data/getuserread.csv")
+
