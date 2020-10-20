@@ -11,7 +11,9 @@ data = tidyr::pivot_longer(
     names_to = "type",
     values_to = "num"
     ) %>%
-    mutate(type2 = stringr::str_extract(type, "user|count"))
+    filter(user_source != 99999999) %>%
+    mutate(type2 = stringr::str_extract(type, "user|count"),
+           type = gsub("_user|_count", "", type))
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -53,7 +55,8 @@ ui <- fluidPage(
 
         # Show a plot of the generated distribution
         mainPanel(
-           plotOutput("plotly")
+           plotlyOutput("plotly"),
+           textOutput("dim")
         )
     )
 )
@@ -67,10 +70,17 @@ server <- function(input, output) {
         userorcount = input$userORcount
 
         data %>%
-            # filter(ref_date >= daterange[1] & daterange <= daterange[2]) %>%
+
+            filter(ref_date >= daterange[1] & daterange <= daterange[2]) %>%
             filter(type %in% types) %>%
             filter(type2 %in% userorcount)
 
+
+    })
+
+    output$dim <- renderPrint({
+
+        print(input$dates)
     })
 
     output$plotly <- renderPlotly({
